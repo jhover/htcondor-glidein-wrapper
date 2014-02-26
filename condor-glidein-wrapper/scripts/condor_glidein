@@ -1,2 +1,8 @@
 #!/bin/env bash
 echo "condor_glidein..."
+cd
+mkdir condor
+cd condor
+wget http://dev.racf.bnl.gov/dist/condor/8.0.6/rhel6/x86_64/condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
+tar xvzf condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
+cd condor-8.0.6-x86_64_RedHat6-stripped
