@@ -21,7 +21,10 @@ DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 
 
 echo "running on $HOST $DATE" 
-echo "creating Condor dir" 
+cd 
+WD=`pwd`
+echo "working dir is $WD"
+echo "creating Condor dir"
 mkdir $CONDOR_DIR
 cd $CONDOR_DIR
 
