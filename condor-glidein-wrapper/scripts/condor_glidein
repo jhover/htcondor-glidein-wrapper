@@ -35,10 +35,9 @@ wget $TARBALL_URL
 echo "unpacking tarball..."
 tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME
 
-echo "running condor_install..."
-./condor_install --type=execute --install-dir=~/condor
+echo "running condor_install.
 
 echo "removing download at $SRC_DIR..."
-rm -rf $SRC_DIR
+#rm -rf $SRC_DIR
 
 
