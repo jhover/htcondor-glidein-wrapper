@@ -11,7 +11,8 @@ ARCH=x86_64
 PLATFORM=RedHat6
 TARBALL_NAME=condor-${CONDOR_VERSION}-${ARCH}_${PLATFORM}-stripped.tar.gz
 TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
-CONDOR_DIR=condor
+CONDOR_DIR=~/condor
+SRC_DIR=~/src/condor-glidein-$CONDOR_VERSION
 DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
 DEFAULT_COLLECTOR_PORT=29618
 
@@ -19,19 +20,25 @@ echo "condor_glidein version $WRAPPER_VERSION"
 HOST=`hostname -f`
 DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 
-
 echo "running on $HOST $DATE" 
 cd 
 WD=`pwd`
 echo "working dir is $WD"
 echo "creating Condor dir"
 mkdir -p $CONDOR_DIR
-cd $CONDOR_DIR
+mkdir -p $SRC_DIR
+cd $SRC_DIR
 
 echo "retrieving tarball from $TARBALL_URL"
 wget $TARBALL_URL
+
 echo "unpacking tarball..."
 tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME
 
+echo "running condor_install..."
+./condor_install --type=execute --install-dir=~/condor
+
+echo "removing download at $SRC_DIR..."
+rm -rf $SRC_DIR
 
 
