@@ -12,6 +12,9 @@ PLATFORM=RedHat6
 TARBALL_NAME=condor-${CONDOR_VERSION}-${ARCH}_${PLATFORM}-stripped.tar.gz
 TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
 CONDOR_DIR=~/condor
+CONFIG=~/condor/etc/condor_config
+
+
 DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
 DEFAULT_COLLECTOR_PORT=29618
 
@@ -35,5 +38,11 @@ tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME
 
 echo "running condor_install..."
 ./condor_install --type=execute
+
+export CONDOR_CONFIG=$CONDOR_DIR/etc/condor_config
+
+echo "adding COLLECTOR_HOST=$DEFAULT_COLLECTOR:$DEFAULT_COLLECTOR_PORT to config"
+echo COLLECTOR_HOST=$DEFAULT_COLLECTOR:$DEFAULT_COLLECTOR_PORT >> $CONFIG
+
 
 
