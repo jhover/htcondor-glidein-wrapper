@@ -1,20 +1,34 @@
 #!/bin/env bash
+#
+# Wrapper to run Condor glidein (master + startd)
+# Configured via args 
+#
+# Author: John Hover <jhover@bnl.gov>
+#
+WRAPPER_VERSION=0.9.0
 CONDOR_VERSION=8.0.6
 ARCH=x86_64
 PLATFORM=RedHat6
 TARBALL_NAME=condor-$CONDOR_VERSION-ARCH_$PLATFORM-stripped.tar.gz
-TARBALL_PATH=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/x86_64/$TARBALL_NAME
+TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
 CONDOR_DIR=condor
+DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
+DEFAULT_COLLECTOR_PORT=29618
 
-echo "condor_glidein..."
-cd
+echo "condor_glidein version $WRAPPER_VERSION"
+HOST=`hostname -f`
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 
+
+echo "running on $HOST $DATE" 
+echo "creating Condor dir" 
 mkdir $CONDOR_DIR
 cd $CONDOR_DIR
 
+echo "retrieving tarball from $TARBALL_URL"
 wget $TARBALL_URL
-tar --verbose --extract --gzip --strip-components=1  --file=
+echo "unpacking tarball..."
+tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME
 
-tar xvzf condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
-cd condor-8.0.6-x86_64_RedHat6-stripped
-tar xvzf condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
+
+
