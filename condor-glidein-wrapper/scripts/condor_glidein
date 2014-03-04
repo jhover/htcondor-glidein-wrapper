@@ -9,7 +9,7 @@ WRAPPER_VERSION=0.9.0
 CONDOR_VERSION=8.0.6
 ARCH=x86_64
 PLATFORM=RedHat6
-TARBALL_NAME=condor-$CONDOR_VERSION-$ARCH_$PLATFORM-stripped.tar.gz
+TARBALL_NAME=condor-${CONDOR_VERSION}-${ARCH}_${PLATFORM}-stripped.tar.gz
 TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
 CONDOR_DIR=condor
 DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
@@ -25,7 +25,7 @@ cd
 WD=`pwd`
 echo "working dir is $WD"
 echo "creating Condor dir"
-mkdir $CONDOR_DIR
+mkdir -p $CONDOR_DIR
 cd $CONDOR_DIR
 
 echo "retrieving tarball from $TARBALL_URL"
