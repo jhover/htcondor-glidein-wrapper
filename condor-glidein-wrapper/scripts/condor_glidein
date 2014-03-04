@@ -1,8 +1,20 @@
 #!/bin/env bash
+CONDOR_VERSION=8.0.6
+ARCH=x86_64
+PLATFORM=RedHat6
+TARBALL_NAME=condor-$CONDOR_VERSION-ARCH_$PLATFORM-stripped.tar.gz
+TARBALL_PATH=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/x86_64/$TARBALL_NAME
+CONDOR_DIR=condor
+
 echo "condor_glidein..."
 cd
-mkdir condor
-cd condor
-wget http://dev.racf.bnl.gov/dist/condor/8.0.6/rhel6/x86_64/condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
+
+mkdir $CONDOR_DIR
+cd $CONDOR_DIR
+
+wget $TARBALL_URL
+tar --verbose --extract --gzip --strip-components=1  --file=
+
 tar xvzf condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
 cd condor-8.0.6-x86_64_RedHat6-stripped
+tar xvzf condor-8.0.6-x86_64_RedHat6-stripped.tar.gz
