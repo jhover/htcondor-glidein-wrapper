@@ -37,35 +37,26 @@ EOF
 }
 
 get_args() {
-	
-while getopts “hc:p:w:v” OPTION ; do
-     case $OPTION in
-        h)
-             usage
-             exit 1
-             ;;
-        c)
-            COLLECTOR=$OPTARG
-             ;;
-        p)
-            PORT=$OPTARG
-             ;;
-        a)
-            AUTH=$OPTARG
-             ;;
-        w)
-            POOLPASS=$OPTARG
-             ;;
-        v)
-             VERBOSE=1
-             ;;
-        ?)
-             usage
-             exit
-             ;;
-     esac
-done
-
+	while getopts “hc:p:w:v” OPTION ; do
+	     case $OPTION in
+	        h)
+	             usage
+	             exit 1;;
+	        c)
+	            COLLECTOR=$OPTARG;;
+	        p)
+	            PORT=$OPTARG;;
+	        a)
+	            AUTH=$OPTARG;;
+	        w)
+	            POOLPASS=$OPTARG;;
+	        v)
+	             VERBOSE=1;;
+	        ?)
+	             usage
+	             exit 1;;
+	     esac
+	done
 }
 
 validate_args() {
@@ -74,7 +65,6 @@ validate_args() {
 	echo "AUTH is $AUTH"
 	echo "POOLPASS is $POOLPASS"
 }
-
 
 print_header() {
 	echo "condor_glidein version $WRAPPER_VERSION"
