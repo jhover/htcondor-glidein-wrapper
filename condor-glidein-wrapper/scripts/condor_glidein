@@ -38,7 +38,7 @@ EOF
 
 get_args() {
 	
-while getopts “hc:p:w:v” OPTION do
+while getopts “hc:p:w:v” OPTION ; do
      case $OPTION in
         h)
              usage
