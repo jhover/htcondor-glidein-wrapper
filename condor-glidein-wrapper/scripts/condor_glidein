@@ -15,6 +15,11 @@ CONDOR_DIR=~/condor
 CONFIG=~/condor/etc/condor_config
 #DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
 #DEFAULT_COLLECTOR_PORT=29618
+COLLECTOR=
+PORT=
+AUTH=
+POOLPASS=
+
 
 usage()
 {
@@ -32,11 +37,6 @@ EOF
 }
 
 get_args() {
-
-	COLLECTOR=
-	PORT=
-	AUTH=
-	POOLPASS=
 	
 	while getopts “hc:p:w:v” OPTION
 	do
