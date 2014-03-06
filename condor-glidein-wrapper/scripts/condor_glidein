@@ -38,34 +38,33 @@ EOF
 
 get_args() {
 	
-	while getopts “hc:p:w:v” OPTION
-	do
-	     case $OPTION in
-	        h)
-	             usage
-	             exit 1
-	             ;;
-	        c)
-	            COLLECTOR=$OPTARG
-	             ;;
-	        p)
-	            PORT=$OPTARG
-	             ;;
-	        a)
-	            AUTH=$OPTARG
-	             ;;
-	        w)
-	            POOLPASS=$OPTARG
-	             ;;
-	        v)
-	             VERBOSE=1
-	             ;;
-	        ?)
-	             usage
-	             exit
-	             ;;
-	     esac
-	done
+while getopts “hc:p:w:v” OPTION do
+     case $OPTION in
+        h)
+             usage
+             exit 1
+             ;;
+        c)
+            COLLECTOR=$OPTARG
+             ;;
+        p)
+            PORT=$OPTARG
+             ;;
+        a)
+            AUTH=$OPTARG
+             ;;
+        w)
+            POOLPASS=$OPTARG
+             ;;
+        v)
+             VERBOSE=1
+             ;;
+        ?)
+             usage
+             exit
+             ;;
+     esac
+done
 
 }
 
@@ -151,7 +150,7 @@ f_exit(){
         exit $RETVAL
 }
 
-get_args
+get_args "$@"
 
 validate_args
 
