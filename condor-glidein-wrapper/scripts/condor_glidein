@@ -88,7 +88,7 @@ setup_dir() {
 	cd 
 	WD=`pwd`
 	echo "working dir is $WD"
-	echo "creating Condor dir"
+	echo "creating Condor dir $CONDOR_DIR"
 	mkdir -p $CONDOR_DIR
 	cd $CONDOR_DIR
 
@@ -96,7 +96,7 @@ setup_dir() {
 
 handle_tarball() {
 	echo "retrieving tarball from $TARBALL_URL"
-	wget $TARBALL_URL
+	wget $TARBALL_URL > /dev/null 2>&1
 	echo "unpacking tarball..."
 	tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME > /dev/null 2>&1
 
