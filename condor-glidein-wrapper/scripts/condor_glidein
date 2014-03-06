@@ -33,7 +33,7 @@ EOF
 
 get_args() {
 
-	COLLECTOR=gridtest05.racf.bnl.gov
+	COLLECTOR=
 	PORT=
 	AUTH=
 	POOLPASS=
@@ -69,6 +69,13 @@ get_args() {
 
 }
 
+validate_args() {
+	echo "COLLECTOR is $COLLECTOR"
+	echo "PORT is $PORT"
+	echo "AUTH is $AUTH"
+	echo "POOLPASS is $POOLPASS"
+}
+
 
 print_header() {
 	echo "condor_glidein version $WRAPPER_VERSION"
@@ -91,19 +98,19 @@ handle_tarball() {
 	echo "retrieving tarball from $TARBALL_URL"
 	wget $TARBALL_URL
 	echo "unpacking tarball..."
-	tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME
+	tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME > /dev/null 2>&1
 
 }
 
 install_condor() {
 	echo "running condor_install..."
-	./condor_install --type=execute
+	./condor_install --type=execute > /dev/null 2>&1
 	export CONDOR_CONFIG=$CONDOR_DIR/etc/condor_config
 
 }
 
 configure_condor() {
- echo "adding COLLECTOR_HOST=$DEFAULT_COLLECTOR:$DEFAULT_COLLECTOR_PORT to config"
+ echo "adding COLLECTOR_HOST=$COLLECTOR:$PORT to config"
  echo COLLECTOR_HOST=$COLLECTOR:$PORT >> $CONFIG
 
 }
@@ -145,7 +152,11 @@ f_exit(){
 }
 
 get_args
+
+validate_args
+
 print_header
+
 setup_dir
 rc=$?
 if [ $rc -ne 0 ]; then
@@ -165,6 +176,12 @@ if [ $rc -ne 0 ]; then
 fi
 
 configure_condor
+rc=$?
+if [ $rc -ne 0 ]; then
+        f_exit $rc
+fi
+
+configure_auth
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
