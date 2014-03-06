@@ -95,36 +95,43 @@ install_condor() {
 	echo "running condor_install..."
 	./condor_install --type=execute > /dev/null 2>&1
 	export CONDOR_CONFIG=$CONDOR_DIR/etc/condor_config
-
+    HN=`hostname -s`
+    mkdir $CONDOR_DIR/local.$HN
+	
 }
 
 configure_condor() {
  echo "adding COLLECTOR_HOST=$COLLECTOR:$PORT to config"
- echo COLLECTOR_HOST=$COLLECTOR:$PORT >> $CONFIG
+ HN=`hostname -s`
+ LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
+ echo COLLECTOR_HOST=$COLLECTOR:$PORT >> $LCONFIG
+
 
 }
 
 configure_auth() {
 	echo "configuring condor auth..."
-	echo 'CCB_ADDRESS = $(COLLECTOR_HOST)' >> $CONFIG
-	echo "HIGHPORT = 30000" >> $CONFIG 
-	echo "LOWPORT = 20000" >> $CONFIG
-	echo "USE_SHARED_PORT = TRUE" >> $CONFIG
-	echo 'DAEMON_LIST =  $(DAEMON_LIST) SHARED_PORT' >> $CONFIG
-	echo 'ALLOW_WRITE = condor_pool@*' >> $CONFIG
-	echo "SEC_DEFAULT_AUTHENTICATION = REQUIRED" >> $CONFIG
-	echo "SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS" >> $CONFIG
+	HN=`hostname -s`
+	LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
+	echo 'CCB_ADDRESS = $(COLLECTOR_HOST)' >> $LCONFIG
+	echo "HIGHPORT = 30000" >> $LCONFIG 
+	echo "LOWPORT = 20000" >> $LCONFIG
+	echo "USE_SHARED_PORT = TRUE" >> $LCONFIG
+	echo 'DAEMON_LIST =  $(DAEMON_LIST) SHARED_PORT' >> $LCONFIG
+	echo 'ALLOW_WRITE = condor_pool@*' >> $LCONFIG
+	echo "SEC_DEFAULT_AUTHENTICATION = REQUIRED" >> $LCONFIG
+	echo "SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS" >> $LCONFIG
 	
-	echo "SEC_DEFAULT_ENCRYPTION = REQUIRED" >> $CONFIG
-	echo "SEC_DEFAULT_INTEGRITY = REQUIRED" >> $CONFIG
-	echo "SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True" >> $CONFIG
-	echo 'ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*' >> $CONFIG
-	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $CONFIG		
+	echo "SEC_DEFAULT_ENCRYPTION = REQUIRED" >> $LCONFIG
+	echo "SEC_DEFAULT_INTEGRITY = REQUIRED" >> $LCONFIG
+	echo "SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True" >> $LCONFIG
+	echo 'ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*' >> $LCONFIG
+	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $LCONFIG		
 					
 	if [ "$AUTH" == "password" ]; then
 	   echo "password auth requested. creating file..."
-	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS
-	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $CONFIG		
+	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS > /dev/null 2>&1
+	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $LCONFIG		
 	fi
 	
 }
