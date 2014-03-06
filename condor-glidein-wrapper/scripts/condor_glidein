@@ -96,7 +96,7 @@ install_condor() {
 	./condor_install --type=execute > /dev/null 2>&1
 	export CONDOR_CONFIG=$CONDOR_DIR/etc/condor_config
     HN=`hostname -s`
-    mkdir $CONDOR_DIR/local.$HN
+    mkdir $CONDOR_DIR/local.$HN/config
 	
 }
 
