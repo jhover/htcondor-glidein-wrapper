@@ -121,7 +121,7 @@ configure_auth() {
 	echo 'ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*' >> $CONFIG
 	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $CONFIG		
 					
-	if [ "$AUTH" -eq "password" ]; then
+	if [ "$AUTH" == "password" ]; then
 	   echo "password auth requested. creating file..."
 	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS
 	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $CONFIG		
