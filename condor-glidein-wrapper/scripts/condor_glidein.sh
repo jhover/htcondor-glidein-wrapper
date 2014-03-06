@@ -37,26 +37,26 @@ get_args() {
 	PORT=
 	AUTH=
 	
-	while getopts “ht:r:p:v” OPTION
+	while getopts “hc:p:v” OPTION
 	do
 	     case $OPTION in
-	         h)
+	        h)
 	             usage
 	             exit 1
 	             ;;
-	         t)
-	             TEST=$OPTARG
+	        c)
+	            COLLECTOR=$OPTARG
 	             ;;
-	         r)
-	             SERVER=$OPTARG
+	        p)
+	            PORT=$OPTARG
 	             ;;
-	         p)
-	             PASSWD=$OPTARG
+	        a)
+	            AUTH=$OPTARG
 	             ;;
-	         v)
+	        v)
 	             VERBOSE=1
 	             ;;
-	         ?)
+	        ?)
 	             usage
 	             exit
 	             ;;
