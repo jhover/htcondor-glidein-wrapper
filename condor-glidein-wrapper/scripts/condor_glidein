@@ -106,20 +106,20 @@ configure_condor() {
 
 configure_auth() {
 	echo "configuring condor auth..."
-	echo "CCB_ADDRESS = $(COLLECTOR_HOST)" >> $CONFIG
+	echo 'CCB_ADDRESS = $(COLLECTOR_HOST)' >> $CONFIG
 	echo "HIGHPORT = 30000" >> $CONFIG 
 	echo "LOWPORT = 20000" >> $CONFIG
 	echo "USE_SHARED_PORT = TRUE" >> $CONFIG
-	echo "DAEMON_LIST =  $(DAEMON_LIST) SHARED_PORT" >> $CONFIG
-	echo "ALLOW_WRITE = condor_pool@*" >> $CONFIG
+	echo 'DAEMON_LIST =  $(DAEMON_LIST) SHARED_PORT' >> $CONFIG
+	echo 'ALLOW_WRITE = condor_pool@*' >> $CONFIG
 	echo "SEC_DEFAULT_AUTHENTICATION = REQUIRED" >> $CONFIG
 	echo "SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS" >> $CONFIG
 	
 	echo "SEC_DEFAULT_ENCRYPTION = REQUIRED" >> $CONFIG
 	echo "SEC_DEFAULT_INTEGRITY = REQUIRED" >> $CONFIG
 	echo "SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True" >> $CONFIG
-	echo "ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*" >> $CONFIG
-	echo "ALLOW_ADMINISTRATOR = condor_pool@*/*" >> $CONFIG		
+	echo 'ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*' >> $CONFIG
+	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $CONFIG		
 					
 	if [ "$AUTH" -eq "password" ]; then
 	   echo "password auth requested. creating file..."
