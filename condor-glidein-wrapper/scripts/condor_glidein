@@ -33,6 +33,9 @@ OPTIONS:
  -h     
  -c      Collector name
  -p      Collector port
+ -a      Auth [password|gsi]
+ -w      Pool password (for password auth)
+ -x      Glidein linger time seconds [300]
  -v      Verbose
 EOF
 }
