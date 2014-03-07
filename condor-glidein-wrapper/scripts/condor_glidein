@@ -70,6 +70,8 @@ validate_args() {
 	echo "PORT is $PORT"
 	echo "AUTH is $AUTH"
 	echo "POOLPASS is $POOLPASS"
+	echo "EXITTIME is $EXITTIME"
+	
 }
 
 print_header() {
