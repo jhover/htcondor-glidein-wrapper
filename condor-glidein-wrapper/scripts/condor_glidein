@@ -178,7 +178,6 @@ run_condor_master() {
 	echo "waiting for master to exit..."
 	wait $MASTERPID
 	echo "master has exitted. done."
-	f_exit 0
 }
 
 
@@ -222,5 +221,10 @@ if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
 
+run_condor_master
+rc=$?
+if [ $rc -ne 0 ]; then
+        f_exit $rc
+fi
 
 
