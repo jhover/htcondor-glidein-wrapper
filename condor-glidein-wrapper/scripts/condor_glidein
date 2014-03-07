@@ -15,10 +15,11 @@ CONDOR_DIR=~/condor
 CONFIG=~/condor/etc/condor_config
 #DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
 #DEFAULT_COLLECTOR_PORT=29618
-COLLECTOR=
-PORT=
-AUTH=
-POOLPASS=
+COLLECTOR=gridtest05.racf.bnl.gov
+PORT=29618
+AUTH=password
+POOLPASS=changeme
+EXITTIME=300
 
 
 usage()
@@ -50,8 +51,10 @@ get_args() {
 	            AUTH=$OPTARG;;
 	        w)
 	            POOLPASS=$OPTARG;;
+	        x)
+	            EXITTIME=$OPTARG;;  
 	        v)
-	             VERBOSE=1;;
+	            VERBOSE=1;;         
 	        ?)
 	             usage
 	             exit 1;;
@@ -114,6 +117,7 @@ configure_auth() {
 	HN=`hostname -s`
 	LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
 	
+    echo "STARTD_NOCLAIM_SHUTDOWN = $EXITTIME" >> $LCONFIG	
 	echo "START = TRUE" >> $LCONFIG
  	echo "SUSPEND = FALSE" >> $LCONFIG
  	echo "PREEMPT = FALSE" >> $LCONFIG
@@ -150,7 +154,6 @@ configure_auth() {
 	
 }
 
-
 f_exit(){
         if [ "$1" == "" ]; then
                 RETVAL=0
@@ -160,6 +163,23 @@ f_exit(){
         echo "exiting with RC = $RETVAL"
         exit $RETVAL
 }
+
+run_condor_master() {
+	echo "running condor master..."
+	condor_master -pidfile $CONDOR_DIR/master.pid &
+	sleep 2
+	MASTERPID=`cat $CONDOR_DIR/master.pid`
+	echo "master PID is $MASTERPID"
+	echo "waiting for master to exit..."
+	wait $MASTERPID
+	echo "master has exitted. done."
+	f_exit 0
+}
+
+
+#
+# Main script
+#
 
 get_args "$@"
 
