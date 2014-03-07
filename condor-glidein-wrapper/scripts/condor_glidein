@@ -2,32 +2,39 @@
 #
 # Wrapper to run Condor glidein (master + startd)
 # Configured via args 
+# Supporting pool password and GSI auth. 
+# glidein exits if no jobs for specified time. 
 #
 # Author: John Hover <jhover@bnl.gov>
 #
+
+############################################
+#     Constants & Defaults
+############################################
 WRAPPER_VERSION=0.9.0
 CONDOR_VERSION=8.0.6
 ARCH=x86_64
 PLATFORM=RedHat6
 TARBALL_NAME=condor-${CONDOR_VERSION}-${ARCH}_${PLATFORM}-stripped.tar.gz
 TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
-CONDOR_DIR=~/condor
-CONFIG=~/condor/etc/condor_config
-#DEFAULT_COLLECTOR=gridtest05.racf.bnl.gov
-#DEFAULT_COLLECTOR_PORT=29618
+CONDOR_DIR=~/condor-glidein
+CONFIG=$CONDOR_DIR/etc/condor_config
 COLLECTOR=gridtest05.racf.bnl.gov
 PORT=29618
 AUTH=password
 POOLPASS=changeme
 EXITTIME=300
 
+############################################
+#                Functions                 #
+############################################
 
 usage()
 {
 cat << EOF
 usage: $0 [options]
 
-Run glidein against given collector:port and auth. 
+Run glidein against given collector:port and auth for at least -x seconds. 
 
 OPTIONS:
  -h     
@@ -71,11 +78,10 @@ validate_args() {
 	echo "AUTH is $AUTH"
 	echo "POOLPASS is $POOLPASS"
 	echo "EXITTIME is $EXITTIME"
-	
 }
 
 print_header() {
-	echo "condor_glidein version $WRAPPER_VERSION"
+	echo "condor_glidein wrapper version $WRAPPER_VERSION"
 	HOST=`hostname -f`
 	DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 	echo "running on $HOST $DATE" 
@@ -92,11 +98,11 @@ setup_dir() {
 }
 
 handle_tarball() {
+    cd $CONDOR_DIR
 	echo "retrieving tarball from $TARBALL_URL"
 	wget $TARBALL_URL > /dev/null 2>&1
 	echo "unpacking tarball..."
 	tar --verbose --extract --gzip --strip-components=1  --file=$TARBALL_NAME > /dev/null 2>&1
-
 }
 
 install_condor() {
@@ -109,15 +115,10 @@ install_condor() {
 }
 
 configure_condor() {
- echo "adding COLLECTOR_HOST=$COLLECTOR:$PORT to config"
- HN=`hostname -s`
- LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
- echo COLLECTOR_HOST=$COLLECTOR:$PORT >> $LCONFIG
-
-
-}
-
-configure_auth() {
+    echo "adding COLLECTOR_HOST=$COLLECTOR:$PORT to config"
+    HN=`hostname -s`
+    LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
+    echo COLLECTOR_HOST=$COLLECTOR:$PORT >> $LCONFIG
 	echo "configuring condor auth..."
 	HN=`hostname -s`
 	LCONFIG=$CONDOR_DIR/local.$HN/condor_config.local
@@ -180,10 +181,9 @@ run_condor_master() {
 	echo "master has exitted. done."
 }
 
-
-#
-# Main script
-#
+############################################
+#             Main script                  #
+############################################
 
 get_args "$@"
 
@@ -215,16 +215,9 @@ if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
 
-configure_auth
-rc=$?
-if [ $rc -ne 0 ]; then
-        f_exit $rc
-fi
-
 run_condor_master
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
-
 
