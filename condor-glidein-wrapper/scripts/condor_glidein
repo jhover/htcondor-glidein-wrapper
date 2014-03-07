@@ -171,7 +171,7 @@ f_exit(){
 
 run_condor_master() {
 	echo "running condor master..."
-	condor_master -pidfile $CONDOR_DIR/master.pid &
+	condor_master -f -pidfile $CONDOR_DIR/master.pid &
 	sleep 2
 	MASTERPID=`cat $CONDOR_DIR/master.pid`
 	echo "master PID is $MASTERPID"
