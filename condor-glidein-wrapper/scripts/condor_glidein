@@ -142,6 +142,11 @@ configure_auth() {
 	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS > /dev/null 2>&1
 	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $LCONFIG		
 	fi
+
+	if [ "$AUTH" == "gsi" ]; then
+		echo "gsi auth requested..."
+	fi	
+
 	
 }
 
@@ -191,3 +196,6 @@ rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
+
+
+
