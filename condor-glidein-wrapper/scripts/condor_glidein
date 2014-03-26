@@ -152,7 +152,8 @@ configure_condor() {
 	echo "SEC_DEFAULT_INTEGRITY = REQUIRED" >> $LCONFIG
 	echo "SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION  = True" >> $LCONFIG
 	echo 'ALLOW_WRITE = $(ALLOW_WRITE), submit-side@matchsession/*' >> $LCONFIG
-	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $LCONFIG		
+	echo 'ALLOW_ADMINISTRATOR = condor_pool@*/*' >> $LCONFIG
+	echo "NUM_SLOTS = 1" >> $LCONFIG		
 					
 	if [ "$AUTH" == "password" ]; then
 	   echo "password auth requested. creating file..."
