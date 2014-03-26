@@ -167,6 +167,8 @@ f_exit(){
                 RETVAL=$1
         fi
         echo "exiting with RC = $RETVAL"
+		DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+		echo "[$DATE] exitting()..."
         exit $RETVAL
 }
 
@@ -178,7 +180,8 @@ run_condor_master() {
 	echo "master PID is $MASTERPID"
 	echo "waiting for master to exit..."
 	wait $MASTERPID
-	echo "master has exitted. done."
+    DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+	echo "[$DATE] master has exitted. done."
 }
 
 ############################################
@@ -191,11 +194,17 @@ validate_args
 
 print_header
 
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+echo "[$DATE] setup_dir()..."
+
 setup_dir
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
+
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+echo "[$DATE] handle_tarball()..."
 
 handle_tarball
 rc=$?
@@ -203,21 +212,29 @@ if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
 
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+echo "[$DATE] install_condor()..."
+
 install_condor
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
 
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+echo "[$DATE] configure_condor()..."
 configure_condor
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
 
+DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+echo "[$DATE] run_condor_master()..."
 run_condor_master
 rc=$?
 if [ $rc -ne 0 ]; then
         f_exit $rc
 fi
+
 
