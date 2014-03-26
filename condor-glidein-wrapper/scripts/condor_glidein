@@ -17,13 +17,14 @@ ARCH=x86_64
 PLATFORM=RedHat6
 TARBALL_NAME=condor-${CONDOR_VERSION}-${ARCH}_${PLATFORM}-stripped.tar.gz
 TARBALL_URL=http://dev.racf.bnl.gov/dist/condor/$CONDOR_VERSION/rhel6/$ARCH/$TARBALL_NAME
-CONDOR_DIR=~/condor-glidein
 CONFIG=$CONDOR_DIR/etc/condor_config
 COLLECTOR=gridtest05.racf.bnl.gov
 PORT=29618
 AUTH=password
 POOLPASS=changeme
 EXITTIME=300
+HDIR=~/
+CONDOR_DIR=`mktemp -d -p $HDIR -t condor-glidein.XXXX`
 
 ############################################
 #                Functions                 #
@@ -78,6 +79,7 @@ validate_args() {
 	echo "AUTH is $AUTH"
 	echo "POOLPASS is $POOLPASS"
 	echo "EXITTIME is $EXITTIME"
+	echo "CONDOR_DIR is $CONDOR_DIR"
 }
 
 print_header() {
@@ -108,9 +110,14 @@ handle_tarball() {
 install_condor() {
 	echo "running condor_install..."
 	./condor_install --type=execute > /dev/null 2>&1
+	rc = $?
+	echo "condor_install finished with rc=$rc"
 	export CONDOR_CONFIG=$CONDOR_DIR/etc/condor_config
+    echo "CONDOR_CONFIG=$CONDOR_CONFIG"
     HN=`hostname -s`
-    mkdir $CONDOR_DIR/local.$HN/config
+    echo "hostname is $HN"
+    echo "making config dir: $CONDOR_DIR/local.$HN/config"
+    mkdir -p $CONDOR_DIR/local.$HN/config
 	
 }
 
@@ -167,6 +174,10 @@ f_exit(){
                 RETVAL=$1
         fi
         echo "exiting with RC = $RETVAL"
+
+		echo "cleaning up temp dir..."
+		rm -rfv $CONDOR_DIR
+
 		DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 		echo "[$DATE] exitting()..."
         exit $RETVAL
