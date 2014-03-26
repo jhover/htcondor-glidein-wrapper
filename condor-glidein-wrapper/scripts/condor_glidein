@@ -187,15 +187,16 @@ f_exit(){
 run_condor_master() {
 	echo "running condor master..."
 	condor_master -f -pidfile $CONDOR_DIR/master.pid &
-	sleep 120
+	sleep 300
 	MASTERPID=`cat $CONDOR_DIR/master.pid`
 	echo "master PID is $MASTERPID"
-	echo "waiting for master to exit..."
+    DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
+	echo "[$DATE] waiting for master to exit..."
 	wait $MASTERPID
     DATE=`date -u +"%Y-%m-%d %H:%M:%SUTC"`
 	echo "[$DATE] master has exitted. done."
 	echo "cleaning up temp dir..."
-	rm -rfv $CONDOR_DIR
+	rm -rfv $CONDOR_DIR | tail -10
 }
 
 ############################################
