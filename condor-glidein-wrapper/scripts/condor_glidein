@@ -22,6 +22,7 @@ COLLECTOR=gridtest05.racf.bnl.gov
 PORT=29618
 AUTH=password
 POOLPASS=changeme
+GRIDSUBS=changeme
 EXITTIME=300
 HDIR=~/
 CONDOR_DIR=`mktemp -d -p $HDIR -t condor-glidein.XXXX`
@@ -43,13 +44,14 @@ OPTIONS:
  -p      Collector port
  -a      Auth [password|gsi]
  -w      Pool password (for password auth)
+ -s      Grid-mapfile subjects (for GSI auth)
  -x      Glidein linger time seconds [300]
  -v      Verbose
 EOF
 }
 
 get_args() {
-	while getopts “hc:p:a:w:x:v” OPTION ; do
+	while getopts “hc:p:a:w:s:x:v” OPTION ; do
 	     case $OPTION in
 	        h)
 	             usage
@@ -62,6 +64,8 @@ get_args() {
 	            AUTH=$OPTARG;;
 	        w)
 	            POOLPASS=$OPTARG;;
+	        s)  
+	            GRIDSUBS=$OPTARG;;
 	        x)
 	            EXITTIME=$OPTARG;;  
 	        v)
@@ -146,7 +150,7 @@ configure_condor() {
 	echo 'DAEMON_LIST =  $(DAEMON_LIST) SHARED_PORT' >> $LCONFIG
 	echo 'ALLOW_WRITE = condor_pool@*' >> $LCONFIG
 	echo "SEC_DEFAULT_AUTHENTICATION = REQUIRED" >> $LCONFIG
-	echo "SEC_DEFAULT_AUTHENTICATION_METHODS = PASSWORD, FS" >> $LCONFIG
+	echo "SEC_DEFAULT_AUTHENTICATION_METHODS = FS" >> $LCONFIG
 	
 	echo "SEC_DEFAULT_ENCRYPTION = REQUIRED" >> $LCONFIG
 	echo "SEC_DEFAULT_INTEGRITY = REQUIRED" >> $LCONFIG
@@ -157,12 +161,26 @@ configure_condor() {
 					
 	if [ "$AUTH" == "password" ]; then
 	   echo "password auth requested. creating file..."
+	   echo 'SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), PASSWORD' >>$LCONFIG
 	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS > /dev/null 2>&1
 	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $LCONFIG		
 	fi
 
 	if [ "$AUTH" == "gsi" ]; then
 		echo "gsi auth requested..."
+		
+		echo 'SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), GSI' >>$LCONFIG
+		GSI_DAEMON_DIRECTORY=$CONDOR_DIR
+		echo "GSI_DAEMON_DIRECTORY=$CONDOR_DIR" >>$LCONFIG
+		echo "GSI_DAEMON_TRUSTED_CA_DIR=$X509_CERT_DIR"  >>$LCONFIG
+		echo "GSI_DAEMON_PROXY = $X509_USER_PROXY" >>$LCONFIG
+		echo 'GSI_DAEMON_NAME = /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest*.racf.bnl.gov' >> $LCONFIG
+		echo 'GRIDMAP = $(GSI_DAEMON_DIRECTORY)/grid-mapfile' >>$LCONFIG
+		GRIDMAP = $GSI_DAEMON_DIRECTORY/grid-mapfile
+		echo '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest03.racf.bnl.gov" condor_pool' >>$GRIDMAP
+		echo '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest05.racf.bnl.gov" condor_pool' >>$GRIDMAP		
+		
+		echo "gsi auth setup complete."
 	fi	
 
 	
