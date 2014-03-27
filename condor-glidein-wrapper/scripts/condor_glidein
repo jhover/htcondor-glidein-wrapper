@@ -163,7 +163,8 @@ configure_condor() {
 	   echo "password auth requested. creating file..."
 	   echo 'SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), PASSWORD' >>$LCONFIG
 	   condor_store_cred -f $CONDOR_DIR/condor_password -p $POOLPASS > /dev/null 2>&1
-	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $LCONFIG		
+	   echo "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password" >> $LCONFIG
+	   echo "password auth setup complete."		
 	fi
 
 	if [ "$AUTH" == "gsi" ]; then
