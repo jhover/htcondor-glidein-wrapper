@@ -177,7 +177,7 @@ configure_condor() {
 		echo "GSI_DAEMON_PROXY = $X509_USER_PROXY" >>$LCONFIG
 		echo 'GSI_DAEMON_NAME = /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest*.racf.bnl.gov' >> $LCONFIG
 		echo 'GRIDMAP = $(GSI_DAEMON_DIRECTORY)/grid-mapfile' >>$LCONFIG
-		GRIDMAP = $GSI_DAEMON_DIRECTORY/grid-mapfile
+		GRIDMAP=$GSI_DAEMON_DIRECTORY/grid-mapfile
 		echo '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest03.racf.bnl.gov" condor_pool' >>$GRIDMAP
 		echo '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest05.racf.bnl.gov" condor_pool' >>$GRIDMAP		
 		
