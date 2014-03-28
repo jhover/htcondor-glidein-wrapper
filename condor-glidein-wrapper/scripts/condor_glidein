@@ -173,7 +173,7 @@ configure_condor() {
 		echo 'SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), GSI' >>$LCONFIG
 		GSI_DAEMON_DIRECTORY=$CONDOR_DIR
 		echo "GSI_DAEMON_DIRECTORY=$CONDOR_DIR" >>$LCONFIG
-		echo "GSI_DAEMON_TRUSTED_CA_DIR=$X509_CERT_DIR"  >>$LCONFIG
+		echo "GSI_DAEMON_TRUSTED_CA_DIR=/etc/grid-security/certificates"  >>$LCONFIG
 		echo "GSI_DAEMON_PROXY = $X509_USER_PROXY" >>$LCONFIG
 		echo 'GSI_DAEMON_NAME = /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest*.racf.bnl.gov' >> $LCONFIG
 		echo 'GRIDMAP = $(GSI_DAEMON_DIRECTORY)/grid-mapfile' >>$LCONFIG
