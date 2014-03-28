@@ -182,7 +182,11 @@ configure_condor() {
 		echo '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest05.racf.bnl.gov" condor_pool' >>$GRIDMAP		
 		
 		echo "gsi auth setup complete."
+		cat $GRIDMAP
 	fi	
+	echo "CONDOR_CONFIG:"
+	cat $LCONFIG
+	echo " "
 
 	
 }
