@@ -187,6 +187,9 @@ configure_condor() {
 	echo "CONDOR_CONFIG:"
 	cat $LCONFIG
 	echo " "
+	echo "ENVIRONMENT:"
+	env | sort 
+	echo " "
 
 	
 }
