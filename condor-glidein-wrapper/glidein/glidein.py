@@ -63,8 +63,8 @@ OPTIONS:
 """
     
     # Defaults
-    debug = False
-    verbose = True
+    debug = True
+    verbose = False
     collector="gridtest05.racf.bnl.gov"
     port= 29618
     authtype="password"
