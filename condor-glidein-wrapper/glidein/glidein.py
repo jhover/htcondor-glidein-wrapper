@@ -348,7 +348,7 @@ OPTIONS:
                    collector=collector_host,
                    port=collector_port,
                    auth=authtype, 
-                   token="changeme", 
+                   token=authtoken, 
                    linger=lingertime, 
                    loglevel=loglevel )
     gi.run_condor_master()
