@@ -22,6 +22,7 @@ import socket
 import subprocess 
 import sys
 import tempfile
+import time
 import urllib
 
 class CondorGlidein(object):
@@ -147,14 +148,8 @@ class CondorGlidein(object):
         self.log.info("Download complete. File OK.")
         self.log.info("Untarring Condor...")
         cmd = "tar --verbose --extract --gzip --strip-components=1  --file=%s " % tarball_name
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        (out, err) = p.communicate()
-        if p.returncode == 0:
-            self.log.info('Command return OK.')
-            self.log.debug(out)
-        else:
-            self.log.error(err)
-            raise Exception("Untar failed. Job failed. ")
+        self.runcommand(cmd)
+        self.log.info("Untarring successful.")
 
     def set_short_hostname(self):
         self.log.debug("Determining short hostname...")
@@ -184,27 +179,16 @@ class CondorGlidein(object):
         cmd = "./condor_install --type=execute"
         self.log.info("Running condor_install: '%s'" % cmd)
         os.chdir(self.condor_dir)
-
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        (out, err) = p.communicate()
-        if p.returncode == 0:
-            self.log.info('Command return OK.')
-            self.log.debug(out)
-        else:
-            self.log.error(err)
-            raise Exception("Condor install failed. Job failed. ")
+        self.runcommand(cmd)
         os.environ["CONDOR_CONFIG"] = "%s/etc/condor_config" % self.condor_dir
         
         self.log.info("Making config dir: %s/local.%s/config" % (self.condor_dir, 
                                                                  self.short_hostname))
-        if not os.path.exists("%s/local.%s" % (self.condor_dir, 
-                                               self.short_hostname)):
-            os.mkdir("%s/local.%s" % (self.condor_dir, 
-                                      self.short_hostname))
-        if not os.path.exists("%s/local.%s/config" % (self.condor_dir, 
-                                                      self.short_hostname)):
-            os.mkdir("%s/local.%s/config" % (self.condor_dir, 
-                                             self.short_hostname)) 
+        try:
+            os.makedirs( "%s/local.%s/config" % (self.condor_dir, self.short_hostname))
+        except OSError, oe:
+            pass
+        
         self.log.info("Condor installed.")    
 
     def configure_condor(self):
@@ -243,15 +227,8 @@ class CondorGlidein(object):
             cfs += "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password\n"
             cmd = "condor_store_cred -f %s/condor_password -p %s" % (self.condor_dir, 
                                                                      self.password)
-            self.log.debug("cmd = %s" % cmd)
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            (out, err) = p.communicate()
-            if p.returncode == 0:
-                self.log.info('Command return OK.')
-                self.log.debug(out)
-            else:
-                self.log.error(err)
-                raise Exception("Condor store credential failed. Job failed.") 
+            self.runcommand(cmd)
+            self.log.info("Password file created successfully. ")
         elif self.auth == 'gsi':
             self.log.info("GSI auth requested...")
             cfs += "SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), GSI\n"
@@ -267,10 +244,16 @@ class CondorGlidein(object):
         lc.close()
 
 
-    def run_condor(self):
-        self.log.info("Running condor...")
-
-
+    def run_condor_master(self):
+        self.log.info("Running condor_master...")
+        cmd = "condor_master -f -pidfile %s/master.pid &" % self.condor_dir
+        self.log.debug("cmd = %s" % cmd)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        masterpid = p.pid
+        time.sleep(300)
+        (out, err) = p.communicate()
+        self.log.info("Condor_master has returned...")
+        
 
     def cleanup(self):
         try:
@@ -282,6 +265,19 @@ class CondorGlidein(object):
         except Exception, ex:
             self.log.error("Exception caught during cleanup. Ex: %s" % ex)
             raise ex
+    #
+    # Utilities
+    #
+    def runcommand(self,cmd):
+        self.log.debug("cmd = %s" % cmd)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        (out, err) = p.communicate()
+        if p.returncode == 0:
+            self.log.info('Command return OK.')
+            self.log.debug(out)
+        else:
+            self.log.error(err)
+            raise Exception("External command failed. Job failed.") 
 
 
 if __name__ == '__main__':
@@ -356,10 +352,11 @@ OPTIONS:
                    token="changeme", 
                    linger=lingertime, 
                    loglevel=loglevel )
+    gi.run_condor_master()
     #gi.run_condor()
     #except Exception, ex:
     #    self.log.error("Top-level exception: %s" % ex)
     
     #finally:
     #    pass
-        #gi.cleanup()
+    #gi.cleanup()
