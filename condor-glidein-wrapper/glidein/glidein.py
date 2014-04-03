@@ -345,8 +345,8 @@ OPTIONS:
             authtoken = arg
         elif opt in ("-x","--lingertime"):
             lingertime = int(arg)
-    #try:
-    gi = CondorGlidein(condor_version=condor_version, 
+    try:
+        gi = CondorGlidein(condor_version=condor_version, 
                    condor_urlbase=condor_urlbase,
                    collector=collector_host,
                    port=collector_port,
@@ -354,11 +354,8 @@ OPTIONS:
                    token=authtoken, 
                    linger=lingertime, 
                    loglevel=loglevel )
-    gi.run_condor_master()
-    #gi.run_condor()
-    #except Exception, ex:
-    #    self.log.error("Top-level exception: %s" % ex)
-    
-    #finally:
-    #    pass
-    #gi.cleanup()
+        gi.run_condor_master()
+        gi.cleanup()
+    except Exception, ex:
+        self.log.error("Top-level exception: %s" % ex)
+        gi.cleanup()
