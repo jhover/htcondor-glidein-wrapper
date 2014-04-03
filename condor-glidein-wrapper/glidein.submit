@@ -4,7 +4,7 @@
 universe = grid
 grid_resource = gt5 gridgk01.racf.bnl.gov/jobmanager-condor
 globusrsl = (jobtype=single)(queue=prod)
-executable = $(Dir)/condor-glidein-wrapper/glidein.py
+executable = /usr/lib/python2.6/site-packages/glidein.py
 transfer_executable = True
 # gsi auth
 arguments = "-d -c gridtest05.racf.bnl.gov -p 29618 -x 120 -a gsi -t '/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest03.racf.bnl.gov, /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest05.racf.bnl.gov'"
