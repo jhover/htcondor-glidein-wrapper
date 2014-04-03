@@ -103,6 +103,8 @@ class CondorGlidein(object):
         self.log.debug("collector: %s" % self.collector)
         self.log.debug("collector_port: %s" % self.collector_port)
         self.log.debug("auth: %s" % self.auth)
+        if self.auth == "gsi":
+            self.log.debug("authtok: %s" % self.authtok)
         self.log.debug("linger: %s" % self.linger)
 
     
@@ -166,6 +168,7 @@ class CondorGlidein(object):
         self.log.info("Creating grid-mapfile: %s" % gmfpath)
         gms = ""
         for n in self.authlist:
+            n = n.strip()
             gms += '"%s" condor_pool\n' % n
         gmf = open(gmfpath, 'w')
         gmf.write(gms)
