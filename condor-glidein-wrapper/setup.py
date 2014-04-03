@@ -16,7 +16,7 @@ setup(
     author='John Hover',
     author_email='jhover@bnl.gov',
     url='https://www.racf.bnl.gov/experiments/usatlas/griddev/',
-    packages=[ 'glidein',
+    py_modules=[ 'glidein',
               ],
     classifiers=[
           'Development Status :: 3 - Beta',
@@ -27,8 +27,6 @@ setup(
           'Programming Language :: Python',
           'Topic :: System Administration :: Management',
     ],
-    scripts=[ 'scripts/condor_glidein',
-             ],
     data_files=[ ('share/condor_glidein', 
                       ['README.txt',
                         ]
