@@ -7,7 +7,7 @@ __author__ = "John Hover"
 __copyright__ = "2014 John Hover"
 __credits__ = []
 __license__ = "GPL"
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 __maintainer__ = "John Hover"
 __email__ = "jhover@bnl.gov"
 __status__ = "Development"
@@ -313,7 +313,7 @@ OPTIONS:
     argv = sys.argv[1:]
     try:
         opts, args = getopt.getopt(argv, 
-                                   "hdvc:p:a:t:x:", 
+                                   "hdvc:p:a:t:x:r:u:", 
                                    ["help",
                                     "debug",
                                     "verbose", 
@@ -321,7 +321,9 @@ OPTIONS:
                                     "port=", 
                                     "authtype=",
                                     "authtoken=",
-                                    "lingertime",
+                                    "lingertime=",
+                                    "condorversion=",
+                                    "condorurlbase="
                                     ])
     except getopt.GetoptError, error:
         print( str(error))
@@ -345,6 +347,11 @@ OPTIONS:
             authtoken = arg
         elif opt in ("-x","--lingertime"):
             lingertime = int(arg)
+        elif opt in ("-r", "--condorversion"):
+            condor_version = arg
+        elif opt in ("-u", "--condorurlbase"):
+            condor_urlbase = arg
+            
     try:
         gi = CondorGlidein(condor_version=condor_version, 
                    condor_urlbase=condor_urlbase,

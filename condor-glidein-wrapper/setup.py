@@ -5,7 +5,9 @@
 import sys
 from distutils.core import setup
 
-release_version="0.8.0"
+import glidein
+
+release_version=glidein.__version__
 
 setup(
     name="condor-glidein-wrapper",
