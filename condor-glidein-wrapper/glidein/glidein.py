@@ -15,10 +15,10 @@ __status__ = "Development"
 
 import getopt
 import logging
-import magic
 import os
 import shutil
 import socket
+import string
 import subprocess 
 import sys
 import tempfile
@@ -46,23 +46,22 @@ class CondorGlidein(object):
             self.password = token
         elif self.auth.lower() == 'gsi':
             self.authtok = token
+            self.authlist = self.authtok.split(',')
         else:
             raise Exception("Invalid auth type: % self.auth")
                         
-        #try:        
-        self.setup_logging(loglevel)
-        self.report_args()
-        self.report_info()
-        self.setup_dir()
-        self.set_short_hostname()
-        self.handle_tarball()
-        self.install_condor()
-        self.configure_condor()
-          
-            
-        #except Exception, ex:
-        #    self.log.error("Exception caught during initialization.")
-        #    raise ex           
+        try:        
+            self.setup_logging(loglevel)
+            self.report_args()
+            self.report_info()
+            self.setup_dir()
+            self.set_short_hostname()
+            self.handle_tarball()
+            self.install_condor()
+            self.configure_condor()
+        except Exception, ex:
+            self.log.error("Exception caught during initialization.")
+            raise ex           
 
     def setup_logging(self, loglevel):
         major, minor, release, st, num = sys.version_info
@@ -135,12 +134,9 @@ class CondorGlidein(object):
             self.log.error("Exception: %s" % ex)
             raise ex
         
-        ms = magic.open(magic.MAGIC_NONE)
-        ms.load()
-        ftype = ms.file(tarball_name)
-        self.log.info("File type: %s " % ftype)
-        ms.close()
-        if "gzip compressed data" in ftype:
+        cmd = "file %s" % tarball_name
+        out = self.runcommand(cmd)
+        if "gzip compressed data" in out:
             self.log.debug("Filetype contains gzip.")
         else:
             raise Exception("File type incorrect. Failed. ")
@@ -169,11 +165,12 @@ class CondorGlidein(object):
         gmfpath = "%s/grid-mapfile" % self.condor_dir 
         self.log.info("Creating grid-mapfile: %s" % gmfpath)
         gms = ""
-        gms += '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest03.racf.bnl.gov" condor_pool\n'
-        gms += '"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest05.racf.bnl.gov" condor_pool\n'
+        for n in self.authlist:
+            gms += '"%s" condor_pool\n' % n
         gmf = open(gmfpath, 'w')
         gmf.write(gms)
         gmf.close()
+        self.log.debug("Created grid-mapfile: %s\n%s\n" % (gmfpath, gms))
 
     def install_condor(self): 
         cmd = "./condor_install --type=execute"
@@ -234,10 +231,12 @@ class CondorGlidein(object):
             cfs += "SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), GSI\n"
             cfs += "GSI_DAEMON_DIRECTORY=%s\n" % self.condor_dir         
             cfs += "GSI_DAEMON_TRUSTED_CA_DIR=/etc/grid-security/certificates\n" 
-            cfs += "GSI_DAEMON_PROXY = %s\n" % os.environ['X509_USER_PROXY']         
-            cfs += "GSI_DAEMON_NAME = /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest*.racf.bnl.gov\n"
+            cfs += "GSI_DAEMON_PROXY = %s\n" % os.environ['X509_USER_PROXY']                     
+            cfs += "GSI_DAEMON_NAME =%s\n" % self.authtok
+            self.log.debug("GSI_DAEMON_NAME=%s" % self.authtok )
             cfs += "GRIDMAP = $(GSI_DAEMON_DIRECTORY)/grid-mapfile\n"         
             self.populate_gridmap()
+
         
         lc = open(lconfig, 'a')
         lc.write(cfs)
@@ -278,7 +277,7 @@ class CondorGlidein(object):
         else:
             self.log.error(err)
             raise Exception("External command failed. Job failed.") 
-
+        return out
 
 if __name__ == '__main__':
     usage = """
@@ -302,8 +301,8 @@ OPTIONS:
     condor_urlbase="http://dev.racf.bnl.gov/dist/condor"
     collector_host="gridtest05.racf.bnl.gov"
     collector_port= "29618"
-    authtype="password"
-    authtoken="changeme"
+    authtype="gsi"
+    authtoken="/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest3.racf.bnl.gov, /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest5.racf.bnl.gov "
     lingertime="600"   # 10 minutes
     loglevel=logging.DEBUG
     
