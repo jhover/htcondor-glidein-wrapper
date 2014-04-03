@@ -29,6 +29,7 @@ setup(
     ],
     data_files=[ ('share/condor_glidein', 
                       ['README.txt',
+                       'glidein.submit'
                         ]
                   ),
                ]
