@@ -187,7 +187,7 @@ class CondorGlidein(object):
         try:
             os.makedirs( "%s/local.%s/config" % (self.condor_dir, self.short_hostname))
         except OSError, oe:
-            pass
+            self.log.debug("Caught OS error creating local config dir. Already exists.")
         
         self.log.info("Condor installed.")    
 
