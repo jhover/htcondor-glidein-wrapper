@@ -227,7 +227,8 @@ class CondorGlidein(object):
             self.log.info("Password auth requested...")
             cfs += "SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS), PASSWORD\n"  
             cfs += "SEC_PASSWORD_FILE = $CONDOR_DIR/condor_password\n"
-            cmd = "condor_store_cred -f %s/condor_password -p %s" % (self.condor_dir, 
+            cmd = "%s/sbin/condor_store_cred -f %s/condor_password -p %s" % (self.condor_dir,
+                                                                     self.condor_dir, 
                                                                      self.password)
             self.runcommand(cmd)
             self.log.info("Password file created successfully. ")
@@ -272,7 +273,7 @@ class CondorGlidein(object):
     #
     # Utilities
     #
-    def runcommand(self,cmd):
+    def runcommand(self, cmd):
         self.log.debug("cmd = %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (out, err) = p.communicate()
