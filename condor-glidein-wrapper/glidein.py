@@ -34,7 +34,8 @@ class CondorGlidein(object):
                        auth="password", 
                        token="changeme", 
                        linger="300", 
-                       loglevel=logging.DEBUG ):
+                       loglevel=logging.DEBUG,
+                       noclean=False ):
         
         self.condor_version = condor_version
         self.condor_urlbase = condor_urlbase
@@ -42,6 +43,7 @@ class CondorGlidein(object):
         self.collector_port = port
         self.linger = linger
         self.auth = auth
+        self.noclean = noclean
         if self.auth.lower() == 'password':
             self.password = token
         elif self.auth.lower() == 'gsi':
@@ -297,6 +299,7 @@ OPTIONS:
     -a --authtype       Auth [password|gsi]
     -t --authtoken      Auth token (password or comma-separated subject DNs for GSI)
     -x --lingertime     Glidein linger time seconds [300]
+    -n --noclean        Don't remove temp directory
 """
     
     # Defaults
@@ -308,12 +311,13 @@ OPTIONS:
     authtoken="/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest3.racf.bnl.gov, /DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=Services/CN=gridtest5.racf.bnl.gov "
     lingertime="600"   # 10 minutes
     loglevel=logging.DEBUG
+    noclean=False
     
     # Handle command line options
     argv = sys.argv[1:]
     try:
         opts, args = getopt.getopt(argv, 
-                                   "hdvc:p:a:t:x:r:u:", 
+                                   "hdvc:p:a:t:x:r:u:n", 
                                    ["help",
                                     "debug",
                                     "verbose", 
@@ -323,7 +327,8 @@ OPTIONS:
                                     "authtoken=",
                                     "lingertime=",
                                     "condorversion=",
-                                    "condorurlbase="
+                                    "condorurlbase=",
+                                    "noclean",
                                     ])
     except getopt.GetoptError, error:
         print( str(error))
@@ -351,6 +356,8 @@ OPTIONS:
             condor_version = arg
         elif opt in ("-u", "--condorurlbase"):
             condor_urlbase = arg
+        elif opt in ("-n", "--noclean"):
+            noclean = True
             
     try:
         gi = CondorGlidein(condor_version=condor_version, 
@@ -360,7 +367,8 @@ OPTIONS:
                    auth=authtype, 
                    token=authtoken, 
                    linger=lingertime, 
-                   loglevel=loglevel )
+                   loglevel=loglevel, 
+                   noclean=noclean )
         gi.run_condor_master()
         gi.cleanup()
     except Exception, ex:
