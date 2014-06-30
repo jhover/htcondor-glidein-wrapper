@@ -373,5 +373,5 @@ OPTIONS:
         gi.run_condor_master()
         gi.cleanup()
     except Exception, ex:
-        self.log.error("Top-level exception: %s" % ex)
+        log.error("Top-level exception: %s" % ex)
         gi.cleanup()
