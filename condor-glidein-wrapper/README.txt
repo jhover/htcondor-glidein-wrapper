@@ -39,4 +39,18 @@ LIMITATIONS
 -- Assumes CA cert dir is /etc/grid-security/certificates. It didn't seem to be set as an arbirary env var on our cluster. 
 
 
+FILES
+
+/etc/grid-security/grid-mapfile   ON collector and schedd
+"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=People/CN=John Hover 241/CN=proxy" condor_pool
+"/DC=com/DC=DigiCert-Grid/O=Open Science Grid/OU=People/CN=John Hover 241" condor_pool
+
+
+
+
+
+
+
+
+
   
